@@ -1,11 +1,14 @@
 require('dotenv').config();
-const { connect } = require('./database');
+ //const { connect } = require('./database');
 
 const express = require("express");
 
 const app = express();
 
+app.use(express.json());
+
 const port = process.env.APP_PORT ?? 5000;
+
 
 
 
@@ -23,6 +26,7 @@ app.get("/api/movies/:id", movieHandlers.getMovieById);
 app.get("/api/users", userHandlers.getUsers);
 app.get("/api/users/:id", userHandlers.getUsersById);
 
+app.post("/api/users", userHandlers.postUser);
 
 app.listen(port, (err) => {
   if (err) {
