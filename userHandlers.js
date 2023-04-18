@@ -15,19 +15,21 @@ const getUsers = (req, res) => {
 const getUsersById = (req, res) => {
     const id = parseInt(req.params.id);
   
-    database
-    .query("SELECT * FROM users WHERE id = ?", [id])
-    .then(([users]) => {
-      if (users.length > 0) {
-        res.json(users[0]);
-      } else {
-        res.status(404).send("Not Found");
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Error retrieving data from database");
-    });
+    
+  database
+  .query(`select * from users where id= ${id}`)
+  .then(([user]) => {
+    if (user != null ) {
+      res.json(user);
+    } else {
+      res.status(404).send("Not Found");
+    }
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send("Error retrieving data from database")
+  })
+
 };
 
 const postUser = (req, res) => {
@@ -45,4 +47,23 @@ const postUser = (req, res) => {
   });
 };
 
-module.exports = { getUsers, getUsersById, postUser, };
+     const putUser = (req, res) => {
+        const id = parseInt(req.params.id);
+        const { firstname, lastname, email, city, language } = req.body;
+        database
+          .query("update users set firstname= ?, lastname= ?, email=?, city= ?, language= ? WHERE id= ?", [firstname, lastname, email, city, language, id])
+          .then(([result]) => {
+            if (result.affectedRows === 0) {
+              res.status(404).send("Not found");
+            } else {
+              res.sendStatus(204);
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            res.status(500).send("Error editing the user");
+          });
+      };
+
+
+module.exports = { getUsers, getUsersById, postUser, putUser, };
